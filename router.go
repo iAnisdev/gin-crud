@@ -1,6 +1,11 @@
 package main
 
-import "github.com/gin-gonic/gin"
+import (
+	"fmt"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+)
 
 func MainRoute(ctx *gin.Context) {
 	ctx.JSON(200, gin.H{
@@ -11,21 +16,34 @@ func MainRoute(ctx *gin.Context) {
 var todos []Todo
 
 func ListTodos(ctx *gin.Context) {
-
+	ctx.JSON(200, gin.H{
+		"todos": todos,
+	})
 }
 
 func AddTodo(ctx *gin.Context) {
+	var newTodo Todo
 
+	if err := ctx.BindJSON(&newTodo); err != nil {
+		fmt.Print(err)
+		return
+	}
+
+	newTodo.id = len(todos) + 1
+	newTodo.isdone = false
+
+	todos = append(todos, newTodo)
+	ctx.IndentedJSON(http.StatusCreated, todos)
 }
 
 func GetTodo(ctx *gin.Context) {
 
 }
 
-func DeleteTodos(ctx *gin.Context) {
+func DeleteTodo(ctx *gin.Context) {
 
 }
 
-func UpdateTodos(ctx *gin.Context) {
+func UpdateTodo(ctx *gin.Context) {
 
 }
