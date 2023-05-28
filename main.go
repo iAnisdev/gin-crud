@@ -5,13 +5,9 @@ import (
 )
 
 func main() {
-	r := gin.Default()
+	router := gin.Default()
 
-	r.GET("/", func(ctx *gin.Context) {
-		ctx.JSON(200, gin.H{
-			"message": "Hello from gin",
-		})
-	})
+	router.GET("/", MainRoute)
 
-	r.Run()
+	router.Run()
 }
