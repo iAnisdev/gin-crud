@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -41,6 +43,21 @@ func AddTodo(ctx *gin.Context) {
 
 func GetTodo(ctx *gin.Context) {
 
+	id := ctx.Param("id")
+	targetId, _ := strconv.ParseInt(id, 10, 0)
+	targetTodo, index := Todo{}, -1
+	for i := range todos {
+		if todos[i].Id == int(targetId) {
+			targetTodo = todos[i]
+			index = i
+		}
+	}
+	if index == -1 {
+		message := fmt.Sprintf("No todo found with id %v ", id)
+		ctx.JSON(http.StatusNotFound, gin.H{"message": message})
+		return
+	}
+	ctx.JSON(http.StatusFound, gin.H{"todos": targetTodo})
 }
 
 func CompleteTodo(ctx *gin.Context) {
