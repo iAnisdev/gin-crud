@@ -1,8 +1,8 @@
 package main
 
 type Todo struct {
-	id          int
-	title       string
-	description string
-	isdone      bool
+	Id          int
+	Title       string
+	Description string
+	Isdone      bool
 }

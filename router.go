@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -13,30 +12,38 @@ func MainRoute(ctx *gin.Context) {
 	})
 }
 
-var todos []Todo
+type body struct {
+	Title       string `json:"title"`
+	Description string `json:"description"`
+}
+
+var todos []Todo = []Todo{}
 
 func ListTodos(ctx *gin.Context) {
-	ctx.JSON(200, gin.H{
-		"todos": todos,
-	})
+	ctx.JSON(http.StatusCreated, gin.H{"todos": []interface{}{todos}})
 }
 
 func AddTodo(ctx *gin.Context) {
-	var newTodo Todo
-
-	if err := ctx.BindJSON(&newTodo); err != nil {
-		fmt.Print(err)
+	body := body{}
+	if err := ctx.BindJSON(&body); err != nil {
+		ctx.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
-
-	newTodo.id = len(todos) + 1
-	newTodo.isdone = false
-
+	newTodo := Todo{
+		Id:          len(todos) + 1,
+		Title:       body.Title,
+		Description: body.Description,
+		Isdone:      false,
+	}
 	todos = append(todos, newTodo)
-	ctx.IndentedJSON(http.StatusCreated, todos)
+	ctx.JSON(http.StatusCreated, newTodo)
 }
 
 func GetTodo(ctx *gin.Context) {
+
+}
+
+func CompleteTodo(ctx *gin.Context) {
 
 }
 
