@@ -42,9 +42,8 @@ func AddTodo(ctx *gin.Context) {
 }
 
 func GetTodo(ctx *gin.Context) {
-
 	id := ctx.Param("id")
-	targetId, _ := strconv.ParseInt(id, 10, 0)
+	targetId, _ := strconv.ParseInt(id, 2, 0)
 	targetTodo, index := Todo{}, -1
 	for i := range todos {
 		if todos[i].Id == int(targetId) {
@@ -52,16 +51,32 @@ func GetTodo(ctx *gin.Context) {
 			index = i
 		}
 	}
+
 	if index == -1 {
 		message := fmt.Sprintf("No todo found with id %v ", id)
 		ctx.JSON(http.StatusNotFound, gin.H{"message": message})
 		return
 	}
-	ctx.JSON(http.StatusFound, gin.H{"todos": targetTodo})
+	ctx.JSON(http.StatusFound, gin.H{"todo": targetTodo})
 }
 
 func CompleteTodo(ctx *gin.Context) {
-
+	id := ctx.Param("id")
+	targetId, _ := strconv.ParseInt(id, 2, 0)
+	targetTodo, index := Todo{}, -1
+	for i := range todos {
+		if todos[i].Id == int(targetId) {
+			todos[i].Isdone = true
+			index = i
+			targetTodo = todos[i]
+		}
+	}
+	if index == -1 {
+		message := fmt.Sprintf("No todo found with id %v ", id)
+		ctx.JSON(http.StatusNotFound, gin.H{"message": message})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{"todo": targetTodo})
 }
 
 func DeleteTodo(ctx *gin.Context) {

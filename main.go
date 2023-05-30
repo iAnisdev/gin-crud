@@ -17,6 +17,8 @@ func main() {
 
 	router.POST("/todo", AddTodo)
 
+	router.PATCH("/todo/:id/complete", CompleteTodo)
+
 	router.PATCH("/todo/:id", UpdateTodo)
 
 	router.DELETE("/todo/:id", DeleteTodo)
