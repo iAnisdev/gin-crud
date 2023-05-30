@@ -19,7 +19,7 @@ type body struct {
 	Description string `json:"description"`
 }
 
-var todos []Todo = []Todo{}
+var todos []Todo = []Todo{{1, "Learn Go", "Learn Go lang basics", false}, {2, "Learn Gin", "Learn gin to make webapps", false}, {3, "Learn Gorm", "Learn gorm to connect to DB", false}, {4, "Learn Grpc", "Learn Grpc to make webapps", false}}
 
 func ListTodos(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, gin.H{"todos": []interface{}{todos}})
@@ -61,7 +61,28 @@ func GetTodo(ctx *gin.Context) {
 }
 
 func UpdateTodo(ctx *gin.Context) {
-
+	id := ctx.Param("id")
+	targetId, _ := strconv.ParseInt(id, 2, 0)
+	body := body{}
+	if err := ctx.BindJSON(&body); err != nil {
+		ctx.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+	targetTodo, index := Todo{}, -1
+	for i := range todos {
+		if todos[i].Id == int(targetId) {
+			todos[i].Title = body.Title
+			todos[i].Description = body.Description
+			targetTodo = todos[i]
+			index = i
+		}
+	}
+	if index == -1 {
+		message := fmt.Sprintf("No todo found with id %v ", id)
+		ctx.JSON(http.StatusNotFound, gin.H{"message": message})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{"todo": targetTodo})
 }
 
 func CompleteTodo(ctx *gin.Context) {
