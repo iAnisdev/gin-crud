@@ -15,8 +15,8 @@ func MainRoute(ctx *gin.Context) {
 }
 
 type body struct {
-	Title       string `json:"title"`
-	Description string `json:"description"`
+	Title       string `json:"title" binding:"required"`
+	Description string `json:"description" binding:"required"`
 }
 
 var todos []Todo = []Todo{{1, "Learn Go", "Learn Go lang basics", false}, {2, "Learn Gin", "Learn gin to make webapps", false}, {3, "Learn Gorm", "Learn gorm to connect to DB", false}, {4, "Learn Grpc", "Learn Grpc to make webapps", false}}
@@ -28,7 +28,7 @@ func ListTodos(ctx *gin.Context) {
 func AddTodo(ctx *gin.Context) {
 	body := body{}
 	if err := ctx.BindJSON(&body); err != nil {
-		ctx.AbortWithError(http.StatusBadRequest, err)
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid inputs, Please check your request body."})
 		return
 	}
 	newTodo := Todo{
@@ -65,7 +65,7 @@ func UpdateTodo(ctx *gin.Context) {
 	targetId, _ := strconv.ParseInt(id, 2, 0)
 	body := body{}
 	if err := ctx.BindJSON(&body); err != nil {
-		ctx.AbortWithError(http.StatusBadRequest, err)
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid inputs, Please check your request body."})
 		return
 	}
 	targetTodo, index := Todo{}, -1
